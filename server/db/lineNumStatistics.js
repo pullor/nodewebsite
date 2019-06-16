@@ -1,38 +1,66 @@
-const sqlIndex = require('./index.js')
+const inquirer = require('inquirer');
+const fs = require('fs');
+const path = require('path');
+const sqlIndex = require('./index.js');
 
-let fs = require('fs')
-let path = require('path')
-
-// 获取命令行参数
-let parm = process.argv.splice(2)
+const filter = ['./node_modules'];
 
 console.log(process.argv, 'process.argv')
-// 第一个参数是路径
-let rootPath = parm[0]
-// 后面的所有参数都是文件后缀
-let types = parm.splice(1)
-// 需要过滤的文件夹
-let filter = ['./node_modules']
 // 统计结果
-let num = 0
+let totalNum = 0;
+let projectName, types, rootPath;
+
+const promptList = [{
+  type: 'input',
+  message: '请输入根目录',
+  name: 'rootPath',
+},{
+  type: 'input',
+  message: '请输入项目名称',
+  name: 'projectName',
+},{
+  type: "checkbox",
+  message: '请输入查询文件类型',
+  name: 'types',
+  choices: [
+      ".vue",
+      ".js",
+      ".json",
+      ".html",
+      ".css"
+  ],
+  validate: function(val) {
+    let done = this.async()
+    if(val.length) { // 校验位数
+      done(null, true);
+    } else {
+      done('请选择类型');
+    }
+  }
+}];
+
+inquirer.prompt(promptList).then(
+  async (answers) => {
+    projectName = answers.projectName;
+    rootPath = answers.rootPath;
+    types = answers.types;
+    await start(rootPath)
+    console.log(`总代码行数：${totalNum}`)
+    // process.exit();
+})
 
 // 获取行数
 async function line(path) {
     let rep = await fs.readFileSync(path)
     rep = rep.toString()
     let lines = rep.split('\n')
-    console.log(path + ' ' + lines.length)
-    if(lines.length > 500){
-      sqlIndex.insertRecord(['bluehorse', path.split('blueHorse')[1], lines.length]).then(()=>{})
-    }
-
-    num += lines.length
+    sqlIndex.insertRecord([projectName, path, lines.length]).then(()=>{})
+    totalNum += lines.length
 }
 
 // 递归所有文件夹统计
 async function start(pt) {
     let files = fs.readdirSync(pt)
-    console.log(files, 'files')
     files
         .map(file => {
             return `${pt}/${file}`
@@ -52,8 +80,3 @@ async function start(pt) {
             }
         })
 };
-
-(async () => {
-    await start(rootPath)
-    console.log(`总代码行数：${num}`)
-})()

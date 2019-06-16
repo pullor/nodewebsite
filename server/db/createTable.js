@@ -56,3 +56,5 @@ let createTable = function( sql ) {
 // createTable(posts)
 // createTable(comment)
 createTable(statistics);
+console.log('建表成功！')
+process.exit();

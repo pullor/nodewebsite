@@ -13,6 +13,11 @@ const routes = [
     path: '/about',
     name: 'About',
     component: (resolve)=>{require(['@/views/About'], resolve)},
+  },
+  {
+    path: '/lineStatistics',
+    name: 'lineStatistics',
+    component: (resolve)=>{require(['@/views/lineStatistics'], resolve)},
   }
 ]
 
