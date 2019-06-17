@@ -43,12 +43,19 @@ export default {
         '项目',
         '文件目录',
         '行数'
-      ]
+      ],
+      tableData:[]
     };
   },
   components: {
 
   },
+  mounted(){
+    this.$axios.get('http://172.172.2.150:3000/statistics/query')
+    .then( res => {
+      console.log(res);
+    })
+  }
 };
 </script>
 

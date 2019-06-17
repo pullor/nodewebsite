@@ -1,5 +1,9 @@
-const index = require('./index.js')
+const query = require('./base.js').query;
 
-index.insertRecord(['rtyu','rtyuio',12])
-
-console.log(index)
+query(`select * from statistics where lineNum > 500;`)
+.then(res=>{
+  res.forEach(item => {
+    console.log(item.filePath, item.lineNum, 'item')
+  });
+  console.log(res.length, 'res.length');
+})
