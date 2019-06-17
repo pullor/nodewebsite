@@ -1,18 +1,15 @@
 const Koa = require('koa')
 const cors = require('koa2-cors')
-// const router = require('./routers/index')
 const router = require('koa-router')()
-const config = require('./config/index')
-const bodyParser = require('koa-bodyparser');
+const koaBodyparser = require('koa-bodyparser');
+
 const ejs = require('ejs');
 const session = require('koa-session-minimal');
 const MysqlStore = require('koa-mysql-session');
-const views = require('koa-views')
-const staticCache = require('koa-static-cache')
+const views = require('koa-views');
+const staticCache = require('koa-static-cache');
 
-
-const app = new Koa()
-
+const app = new Koa();
 app.use(cors({
   origin: function (ctx) {
       // if (ctx.url === '/cors') {
@@ -27,13 +24,13 @@ app.use(cors({
   allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
 }));
 
-app.use(router.routes())
-// .use(router.allowedMethods())
+app.use(koaBodyparser());
+
 router.get('/statistics/query', async (ctx, next) => {
   ctx.response.body = '<h1>index page</h1>'
-})
+});
 
-app.listen(3000, () => {
-    console.log('[demo] route-use-middleware is starting at port 3000')
-})
+app.use(router.routes())
+   .use(router.allowedMethods());
 
+app.listen(3000, () => {});
