@@ -2,24 +2,30 @@ const mongoose = require('mongoose');
 const db = mongoose.connect("mongodb://localhost/test", {useNewUrlParser: true});
 
 // 账户的数据库模型
-var UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   username:String,
   password:String,
   email:String
 });
+// 接口数据模型
+const Api = new mongoose.Schema({
+  api: String,
+  cuurentDomain: String,
+  domainList: Array,
+})
 
-var User = mongoose.model('User',UserSchema);
+const User = mongoose.model('User',UserSchema);
+const ApiInfo = mongoose.model('ApiInfo',Api);
 
 // 新增数据
-var user = {
+const user = {
   username: 'ydj',
   password: '123123',
   email: ''
 }
 
-
-var newUser = new User(user);
+const newUser = new User(user);
+// newUser.save();
 
 exports.User = User;
-
-// newUser.save();
+exports.ApiInfo = ApiInfo;

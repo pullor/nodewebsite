@@ -17,6 +17,25 @@ router.get('/', async (ctx, next) => {
 	return result
 })
 
+const list = [
+  {
+    proxyName: 'mock',
+    target: 'https://a.example.com',
+  },
+  {
+    proxyName: 'daily',
+    target: 'https://a.example.com',
+  },
+  {
+    proxyName: 'gray',
+    target: 'https://b.example.com',
+  },
+  {
+    proxyName: 'online',
+    target: 'https://www.yaruyi.com',
+  },
+];
+
 const app = new Koa();
 
 app.use(router.routes())
@@ -27,7 +46,23 @@ app.use(async(ctx, next) => { 
   await k2c(httpProxy({        
     target: 'http://daily.xiaoer.webuy.ai',         
     changeOrigin: true,        
-    secure: false,              
+    secure: false,  
+    onProxyReq(proxyReq, req, res, options) {
+      console.log(res, '>>>>>>>>>>>')
+      // console.log( proxyReq, '000000')
+    },   
+    onProxyRes(proxyRes, req, res) {
+      proxyRes.headers['x-added'] = 'foobar'; // add new header to response
+      delete proxyRes.headers['x-removed']; // remove header from response
+    },
+    onOpen(proxySocket) {
+      console.log(proxySocket, 'proxySocket')
+      // listen for messages coming FROM the target here 
+      proxySocket.on('data', hybiParseAndLogMessage => {
+        console.log(hybiParseAndLogMessage, '234567890')
+      });
+  }
+
   }        
   ))(ctx,next);      
   next()
