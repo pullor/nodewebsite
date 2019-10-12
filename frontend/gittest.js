@@ -1,5 +1,5 @@
 const obj = {
-  version: 3,
+  version: 4,
 }
 
 exports.obj = obj;
